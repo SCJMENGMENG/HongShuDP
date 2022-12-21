@@ -10,7 +10,7 @@ export default {
     render() {
         return (
             <View style = {styles.container}>
-                <Text style={styles.text}>登录</Text>
+                <Text style={styles.title}>登录</Text>
                 <View style={styles.view}>
                     <TouchableOpacity onPress = {this.jumpToStart}>
                         <Text style={styles.text}>跳转到启动页(用于广告等页面)</Text>
@@ -40,7 +40,13 @@ const styles = StyleSheet.create({
         margin:5,
         borderRadius:5
     },
+    title:{
+        padding:5,
+        color:'green',
+        fontWeight:'bold',
+    },
     text: {
-        padding:5
+        padding:5,
+        color:'white',
     }
 });

@@ -1,12 +1,37 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet,Button} from 'react-native';
+import {View, Text, StyleSheet,Button,TextInput} from 'react-native';
 import {connect} from 'react-redux'
 import *as Actions from '../../redux/index'
+import BarrageMoveView from '../../component/tool/barrageTool/BarrageMoveView';
+import BarrageInputView from '../../component/tool/barrageTool/BarrageInputView';
+import UI from '../../component/tool/barrageTool/UI';
 
 class PicturePage extends Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            inputValue:'',
+            data:[],
+        };
+        this.id = 0;
+        this.data = [
+            '哈喽～～～，大家好',
+            '今天天气不错',
+            '要好好学习天天向上啊',
+            '我是一只来自北方的狼',
+            '程序员牛逼',
+            '阅读是人类进步的阶梯',
+            '从哪里摔倒就从哪里爬起来',
+            '吼吼',
+            '常用链接',
+            '6666',
+            '走你',
+            'iPhone真香',
+            '这波操作我给666',
+            '要开心啊',
+            '机智如我',
+        ]
         this.changeReducerValue = this.changeReducerValue.bind(this)
         this.changeReducerNetValue = this.changeReducerNetValue.bind(this)
     }
@@ -21,11 +46,77 @@ class PicturePage extends Component {
         this.props.changeReducerNetValue()
     }
 
+    componentDidMount() {
+        this.addBarrageWithInterval();
+    }
+
+    componentWillUnmount() {
+        this.interval && clearInterval(this.interval);
+        this.interval1 && clearInterval(this.interval1);
+    }
+
+    addBarrageWithInterval = () => {
+        this.interval = setInterval(() => {
+            this.id = this.id + 1;
+            // if (this.id > 500) {
+            //   clearInterval(this.interval);
+            //   this.interval1 = setInterval(() => {
+            //     this.id = this.id + 1;
+            //     const text = this.getText();
+            //     const newData = [{ title: text, id: this.id }];
+            //     this.setState({ data: newData });
+            //   }, 3000);
+            // }
+            const text = this.getText();
+            const newData = [{ title: text, id: this.id }];
+            this.setState({ data: newData });
+        }, 100);
+    }
+
+    onButtonPress = (text) => {
+        this.id = this.id + 1;
+        const newData = [{ title: text, id: this.id }];
+        this.setState({ data: newData });
+    }
+
+    getText = () => {
+        const number = this.getRundomNumber(this.data.length - 1);
+        return this.data[number];
+    }
+
+    getRundomNumber = (max) => {
+        return Math.floor(Math.random() * (max + 1));
+    }
+
     render() {
         const navigate = this.props.navigation;
         return (
-            <View style={{marginTop:100}}>
-                <Text style={{textAlign:'center'}}>{this.props.pictureText + '&' + this.props.pictureTest}</Text>
+            <View style={styles.container}>
+                <View style={styles.topStyle}>
+                    <Text style={styles.titleStyle}>{this.state.inputValue ? '店名：' + this.state.inputValue : '输入店名'}</Text>
+                    <TextInput
+                        style={styles.inputStyle}
+                        placeholder='请输入店名'
+                        maxLength={100}
+                        value={this.state.inputValue}
+                        onChangeText={(text) => {
+                            this.setState({inputValue:text})
+                            console.log('---scj---' + this.state.inputValue)
+                        }}
+                    />
+                </View>
+                <View style={{
+                    backgroundColor: 'green',
+                    height:100,
+                    flex: 1,
+                    paddingTop: UI.IS_IPHONE_X ? 34 : 24,
+                    paddingBottom: UI.IS_IPHONE_X ? 44 : 0,
+                }}>
+                    <View style={{flex:1}}>
+                        <BarrageMoveView newMessages={this.state.data} numberOfLines={10} speed={1} />
+                    </View>
+                    <BarrageInputView onButtonPress={this.onButtonPress} />
+                </View>
                 <Button
                     title="go to detail"
                     onPress={() => navigate.navigate('PictureDetail')}
@@ -50,28 +141,45 @@ class PicturePage extends Component {
                         this.changeReducerValue('1111','2222')
                     }}
                 />
+                <View style={styles.nextStyle}>
+                    <Button
+                        title="下一步"
+                        color={'white'}
+                        onPress={() => {
+
+                        }}
+                    />
+                </View>
             </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    sectionContainer: {
-        marginTop: 32,
-        paddingHorizontal: 24,
+    container: {
+        flex:1,
+        justifyContent:'space-between'
     },
-    sectionTitle: {
-        fontSize: 24,
-        fontWeight: '600',
+    topStyle:{
+        margin:50,
     },
-    sectionDescription: {
-        marginTop: 8,
-        fontSize: 18,
-        fontWeight: '400',
+    titleStyle:{
+        margin:20,
+        marginLeft:0,
+        fontSize:20,
+        color:'green'
     },
-    highlight: {
-        fontWeight: '700',
+    inputStyle:{
+        fontSize:20,
+        borderWidth:1,
+        borderColor:'#969696',
+        padding:2
     },
+    nextStyle: {
+        margin:50,
+        backgroundColor:'green',
+        borderRadius:5,
+    }
 });
 
 const mapStateToProps = (state,ownProps) => {
